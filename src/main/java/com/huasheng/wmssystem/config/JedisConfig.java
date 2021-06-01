@@ -1,5 +1,7 @@
 package com.huasheng.wmssystem.config;
 
+import org.crazycake.shiro.RedisCacheManager;
+import org.crazycake.shiro.RedisManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,6 +65,23 @@ public class JedisConfig {
             logger.error("初始化Redis连接池JedisPool异常:" + e.getMessage());
         }
         return null;
+    }
+
+    @Bean
+    public RedisManager redisManager() {
+        RedisManager redisManager = new RedisManager();
+        redisManager.setHost(host);
+        redisManager.setJedisPool(redisPoolFactory());
+        redisManager.setPassword(password);
+        redisManager.setTimeout(timeout);
+        return redisManager;
+    }
+
+    @Bean
+    public RedisCacheManager cacheManager() {
+        RedisCacheManager redisCacheManager = new RedisCacheManager();
+        redisCacheManager.setRedisManager(redisManager());
+        return redisCacheManager;
     }
 
     public String getHost() {

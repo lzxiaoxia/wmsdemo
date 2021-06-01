@@ -34,14 +34,6 @@ public class ShiroConfig {
     @Autowired
     JwtFilter jwtFilter;
 
-    @Value("${shiro-redis.redis-manager}")
-    private String hostName;
-    @Value("${spring.redis.port}")
-    private int port;
-    @Value("${spring.redis.password}")
-//    private String password = "test123456";
-    private String password;
-
     @Bean
     public SessionManager sessionManager(RedisSessionDAO redisSessionDAO) {
         DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
