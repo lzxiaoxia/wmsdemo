@@ -3,18 +3,22 @@ package com.huasheng.wmssystem.domain.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+import java.util.Date;
 
 //@Getter
 //@Setter
 @Entity
 @Table(name = "test")
 @Data
+@SQLDelete(sql = "update [test] set status = -1 where rid = ?")
+@Where(clause = "status <> -1")
 public class Test {
 
     @Id
@@ -28,7 +32,7 @@ public class Test {
     private String roleName;
 
 //    @Column(name = "description" , columnDefinition="nvarchar")
-    @ApiModelProperty(value = "描述")
+    @ApiModelProperty(value = "描述",example = "描述")
     private String description;
 
     @Column(name = "padlogin")
@@ -42,9 +46,9 @@ public class Test {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 //    @ApiModelProperty(hidden = true)
-    @ApiModelProperty(dataType = "string")
-    @Column(name = "add_time", columnDefinition = "datetime")
-    private Timestamp addTime;
+//    @ApiModelProperty(dataType = "Date" )
+    @Column(name = "add_time")
+    private Date addTime;
 
     @Column(name = "adduser", columnDefinition = "uniqueidentifier")
     @ApiModelProperty(hidden = true)

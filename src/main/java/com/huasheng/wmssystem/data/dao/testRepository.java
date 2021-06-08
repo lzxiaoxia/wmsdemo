@@ -15,5 +15,5 @@ public interface testRepository extends JpaRepository<Test, String>, JpaSpecific
 
     Test findByRoleNameAndStatus(String roleName, int status);
 
-
+//    void delete(String id);
 }

@@ -1,6 +1,8 @@
 package com.huasheng.wmssystem.utils;
 
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,6 +10,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.crypto.Data;
 
 /**
@@ -262,7 +265,7 @@ public class Tools {
     /**
      * 获取当前时间的三种方法
      */
-    public static String getNowDate() {
+    public static String getNowTimeStr() {
         //方法1：通过Util包中的Date获取
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
@@ -319,8 +322,24 @@ public class Tools {
      */
     public static Timestamp getNowTime() {
         Date date = new Date();
-
         return new Timestamp(date.getTime());
+    }
+
+
+    /**
+     * 直接输出JSON 格式的Responses信息
+     *
+     * @param response HttpServletResponse
+     * @param msg      JSON
+     * @throws IOException ignore
+     */
+    public static void defaultPrintJson(HttpServletResponse response, String msg) throws IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+        PrintWriter printWriter = response.getWriter();
+        printWriter.write(msg);
+        printWriter.flush();
+        printWriter.close();
     }
 
 }

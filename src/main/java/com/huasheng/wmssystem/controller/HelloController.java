@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huasheng.wmssystem.core.service.TestService;
 import com.huasheng.wmssystem.domain.entity.Test;
 import com.huasheng.wmssystem.domain.model.UserRedis;
+import com.huasheng.wmssystem.domain.model.paramodel.ListPara;
 import com.huasheng.wmssystem.domain.model.resultmodel.ResultBase;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -29,11 +29,11 @@ public class HelloController {
     TestService testService;
 
     /**
+     * @return java.lang.String
      * @Description hello测试
-     * @Param       []
-     * @return      java.lang.String
-     * @Author      xjTang
-     * @Date        Create by 2021/5/14 15:26
+     * @Param []
+     * @Author xjTang
+     * @Date Create by 2021/5/14 15:26
      */
     @GetMapping("/hello")
     public String hello() {
@@ -79,29 +79,36 @@ public class HelloController {
     }
 
 
-
     @GetMapping("rolelist")
     @ApiOperation(value = "分页查询")
-//    @ApiImplicitParam(name = "id", value = "商品ID",  paramType = "path", required = true, dataType =  "Integer")
-    public String list(HashMap map, String nameParam,
-                       @RequestParam(value = "page", defaultValue = "1") Integer page,
-                       @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "page",defaultValue = "1",example = "1"),
+//            @ApiImplicitParam(name = "pageSize",defaultValue = "10")
+//    })
 
-        try {
-            ObjectMapper objectMapper=new ObjectMapper();
+//    public String list(
+//            @RequestParam(value = "page", defaultValue = "1") int page,
+//            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
 
-            String json=objectMapper.writeValueAsString(testService.findList(nameParam,page-1,pageSize));
+//        public String list(
+//            @ApiParam(value = "page", example = "1",defaultValue = "1") @PathVariable Integer page,
+//            @ApiParam(value = "pageSize", example = "10") Integer pageSize) {
+
+//    public String list(Integer page,int pageSize) {
+    public String list(ListPara listPara) {
+
+        try{
+            String nameParam="";
+            ObjectMapper objectMapper = new ObjectMapper();
+
+//            String json = objectMapper.writeValueAsString(testService.findList(nameParam, page - 1, pageSize-1));
+            String json = objectMapper.writeValueAsString(testService.findList(nameParam, listPara.getPage() - 1, listPara.getPageSize()-1));
             System.out.println(json);
-            map.put("data",json);
-            map.put("nameParam",nameParam);
-            map.put("code",1);
-
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-        }catch (Exception e){
-            map.put("code",0);
-            map.put("msg","失败");
+        } catch (Exception e) {
+
             e.printStackTrace();
         }
 
@@ -121,11 +128,35 @@ public class HelloController {
 //    @org.springframework.web.bind.annotation.RequestBody
 //    Pet body)
     public Map editMenu(
-                        @RequestBody
-                                Test bean) {
+            @RequestBody
+                    Test bean) {
         Map map = new HashMap();
         try {
             return testService.edit(bean);
+        } catch (Exception e) {
+            map.put("code", 0);
+            map.put("msg", "失败");
+            e.printStackTrace();
+            return map;
+        }
+    }
+
+    @DeleteMapping("delete")
+    @ResponseBody
+    @ApiOperation(value = "删除角色")
+//    @ApiImplicitParam(name = "Content-Type", defaultValue = "application/json", required = true ,value = "header param")
+//    @ApiImplicatParams({
+//            @ApiImplicatParam(paramType = "header", name = "Content-Type", defaultValue = "application/json", required = true ,value = "header param")
+//    })
+//    @RequiresPermissions("notice:edit")//权限管理;
+//    (@Parameter(in = ParameterIn.DEFAULT, description = "Pet object that needs to be added to the store", required=true, schema=@Schema()) @Valid
+//    @org.springframework.web.bind.annotation.RequestBody
+//    Pet body)
+    public Map delete(String id) {
+        Map map = new HashMap();
+        try {
+            testService.deleteById(id);
+            return map;
         } catch (Exception e) {
             map.put("code", 0);
             map.put("msg", "失败");
@@ -139,7 +170,7 @@ public class HelloController {
 //    @RequiresAuthentication
     public ResultBase toEdit(String id) {
         Map map = new HashMap();
-        ResultBase resultBase =new ResultBase();
+        ResultBase resultBase = new ResultBase();
         try {
             return ResultBase.succ(testService.findByRid(id));
 //            map.put("bean", testService.findByRid(id));
@@ -147,7 +178,7 @@ public class HelloController {
 //            map.put("msg", "成功");
         } catch (Exception e) {
 
-            return ResultBase.fail("10020","失败");
+            return ResultBase.fail("10020", "失败");
 //            map.put("code", 0);
 //            map.put("msg", "失败");
 //            e.printStackTrace();

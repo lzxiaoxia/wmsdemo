@@ -1,22 +1,18 @@
 package com.huasheng.wmssystem.config;
 
-import io.swagger.v3.oas.models.OpenAPI;
+import com.huasheng.wmssystem.exception.CommonErrorEnums;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.oas.annotations.EnableOpenApi;
-import springfox.documentation.schema.ModelRef;
+import springfox.documentation.builders.ResponseBuilder;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
-import io.swagger.v3.oas.models.info.Info;
 
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,46 +24,14 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
- /*   @Bean
-    public Docket customImplementation(){
-        return new Docket(DocumentationType.OAS_30)
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("com.huasheng.wmssystem.controller"))
-                .build()
-//                .directModelSubstitute(org.threeten.bp.LocalDate.class, java.sql.Date.class)
-//                .directModelSubstitute(org.threeten.bp.OffsetDateTime.class, java.util.Date.class)
-                .apiInfo(apiInfo());
-    }
-
-    ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title("wms接口文档")
-                .description("")
-//                .license("Apache 2.0")
-//                .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
-                .termsOfServiceUrl("")
-                .version("1.0.0")
-//                .contact(new Contact("","", "apiteam@swagger.io"))
-                .build();
-    }
-
-    @Bean
-    public OpenAPI openApi() {
-        return new OpenAPI()
-                .info(new Info()
-                        .title("wms接口文档")
-                        .description("")
-                        .termsOfService("")
-                        .version("1.0.0")
-//                        .contact(new io.swagger.v3.oas.models.info.Contact()
-//                                .email("apiteam@swagger.io"))
-                );
-    }*/
-
-
     // 配置 Swagger 的Docket的bean实例
     @Bean
-    public Docket docket(){
+    public Docket docket() {
+        List<Response> responseList = new ArrayList<>();
+        for (CommonErrorEnums enums : CommonErrorEnums.values()) {
+            responseList.add(new ResponseBuilder().code(enums.getCodeStr()).description(enums.getMsg()).build());
+        }
+
         return new Docket(DocumentationType.OAS_30)
                 .apiInfo(apiInfo())
                 .groupName("wms系统")
@@ -84,6 +48,13 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any())
                 // .paths(PathSelectors.ant(""))
                 .build()
+                .globalResponses(HttpMethod.GET, responseList)
+                .globalResponses(HttpMethod.POST, responseList)
+                .globalResponses(HttpMethod.DELETE, responseList)
+                .globalResponses(HttpMethod.PUT, responseList)
+                //类型左边转成右边
+//                .directModelSubstitute(java.sql.Timestamp.class, java.util.Date.class)
+//                .directModelSubstitute(org.threeten.bp.OffsetDateTime.class, java.util.Date.class)
                 .securitySchemes(securitySchemes())
                 .securityContexts(securityContexts());
     }
@@ -104,6 +75,7 @@ public class SwaggerConfig {
     private AuthorizationScope[] scopes() {
         return new AuthorizationScope[]{new AuthorizationScope("global", "accessAnything")};
     }
+
     private List<SecurityScheme> securitySchemes() {
         List<SecurityScheme> apiKeyList = new ArrayList<>();
         apiKeyList.add(new ApiKey("Authorization", "Authorization", "header"));

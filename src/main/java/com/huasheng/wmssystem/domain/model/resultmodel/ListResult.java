@@ -1,5 +1,6 @@
 package com.huasheng.wmssystem.domain.model.resultmodel;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,8 +14,10 @@ import lombok.Setter;
 @Setter
 public class ListResult extends ResultBase{
 
+    @ApiModelProperty(value = "总数量")
     private int total;
 
+    @ApiModelProperty(value = "总页数")
     private int pageTotal;
 
     public static ListResult succ(int pageTotal,int total,Object data) {

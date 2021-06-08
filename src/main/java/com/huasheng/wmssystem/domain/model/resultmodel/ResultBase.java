@@ -1,5 +1,6 @@
 package com.huasheng.wmssystem.domain.model.resultmodel;
 
+import com.huasheng.wmssystem.exception.CommonErrorEnums;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -17,6 +18,13 @@ public class ResultBase implements Serializable {
     private String msg;
 
     private Object data;
+
+    public static ResultBase succ() {
+        ResultBase r = new ResultBase();
+        r.setCode("00000");
+        r.setMsg("成功");
+        return r;
+    }
 
     public static ResultBase succ(Object data) {
         ResultBase r = new ResultBase();
@@ -38,6 +46,14 @@ public class ResultBase implements Serializable {
         ResultBase r = new ResultBase();
         r.setCode(code);
         r.setMsg(msg);
+        r.setData(null);
+        return r;
+    }
+
+    public static ResultBase fail(CommonErrorEnums errorEnums) {
+        ResultBase r = new ResultBase();
+        r.setCode(errorEnums.getCodeStr());
+        r.setMsg(errorEnums.getMsg());
         r.setData(null);
         return r;
     }

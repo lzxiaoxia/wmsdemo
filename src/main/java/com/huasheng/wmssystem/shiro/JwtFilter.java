@@ -2,14 +2,20 @@ package com.huasheng.wmssystem.shiro;
 
 import cn.hutool.json.JSONUtil;
 import com.huasheng.wmssystem.domain.model.resultmodel.ResultBase;
+import com.huasheng.wmssystem.exception.CommonErrorEnums;
 import com.huasheng.wmssystem.utils.JwtUtils;
+import com.huasheng.wmssystem.utils.Tools;
 import io.jsonwebtoken.Claims;
+import javassist.NotFoundException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.ExpiredCredentialsException;
+import org.apache.shiro.authz.UnauthenticatedException;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,6 +25,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+
+import org.springframework.util.Assert;
 
 @Component
 public class JwtFilter extends AuthenticatingFilter {
@@ -31,7 +40,7 @@ public class JwtFilter extends AuthenticatingFilter {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String jwt = request.getHeader("Authorization");
-        if(StringUtils.isEmpty(jwt)) {
+        if (StringUtils.isEmpty(jwt)) {
             return null;
         }
 
@@ -43,14 +52,27 @@ public class JwtFilter extends AuthenticatingFilter {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String jwt = request.getHeader("Authorization");
-        if(StringUtils.isEmpty(jwt)) {
+        if (StringUtils.isEmpty(jwt)) {
             return true;
         } else {
-
             // 校验jwt
             Claims claim = jwtUtils.getClaimByToken(jwt);
-            if(claim == null || jwtUtils.isTokenExpired(claim.getExpiration())) {
-                throw new ExpiredCredentialsException("token已失效，请重新登录");
+            if (claim == null || jwtUtils.isTokenExpired(claim.getExpiration())) {
+//                throw new ExpiredCredentialsException("token已失效，请重新登录");
+            /*    onAccessDenied(
+                        WebUtils.toHttp(servletRequest),
+                        WebUtils.toHttp(servletResponse),
+                        "token已失效，请重新登录");*/
+
+                HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
+
+                ResultBase result = ResultBase.fail(CommonErrorEnums.USER_LOGIN_EXPIRED);
+                String json = JSONUtil.toJsonStr(result);
+
+                httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+                Tools.defaultPrintJson(httpServletResponse, json);
+
+                return false;
             }
 
             // 执行登录
@@ -64,11 +86,12 @@ public class JwtFilter extends AuthenticatingFilter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 
         Throwable throwable = e.getCause() == null ? e : e.getCause();
-        ResultBase result = ResultBase.fail("10020",throwable.getMessage());
+        ResultBase result = ResultBase.fail(CommonErrorEnums.USER_VERIFY_ERROR.getCodeStr(), throwable.getMessage());
         String json = JSONUtil.toJsonStr(result);
 
         try {
-            httpServletResponse.getWriter().print(json);
+            Tools.defaultPrintJson(httpServletResponse, json);
+//            httpServletResponse.getWriter().print(json);
         } catch (IOException ioException) {
 
         }
@@ -91,4 +114,5 @@ public class JwtFilter extends AuthenticatingFilter {
 
         return super.preHandle(request, response);
     }
+
 }

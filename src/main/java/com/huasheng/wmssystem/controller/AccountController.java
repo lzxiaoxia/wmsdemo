@@ -4,11 +4,14 @@ import com.huasheng.wmssystem.core.service.UserService;
 import com.huasheng.wmssystem.domain.entity.User;
 import com.huasheng.wmssystem.domain.model.paramodel.LoginPara;
 import com.huasheng.wmssystem.domain.model.resultmodel.ResultBase;
+import com.huasheng.wmssystem.exception.CommonErrorEnums;
+import com.huasheng.wmssystem.exception.GlobalExceptionHandler;
 import com.huasheng.wmssystem.utils.JwtUtils;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresGuest;
-import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.annotations.ApiOperation;
@@ -29,15 +32,17 @@ import javax.servlet.http.HttpServletResponse;
  */
 @RestController
 @Slf4j
-@RequestMapping("/api")
-public class AccountController {
+@RequestMapping("/account")
+public class AccountController extends GlobalExceptionHandler {
 
+    //    @RequiresAuthentication
     @RequiresAuthentication
     @GetMapping("/hello")
     public String hello() {
 
         return "welcome to wms!";
     }
+
 
     @Autowired
     UserService userService;
@@ -54,7 +59,7 @@ public class AccountController {
         Assert.notNull(user, "用户不存在");
 
         if (!user.getPassword().equalsIgnoreCase(SecureUtil.md5(loginPara.getPassword()))) {
-            return ResultBase.fail("20005", "密码不正确");
+            return ResultBase.fail(CommonErrorEnums.WRONG_USERNAME_PWD);
         }
         String jwt = jwtUtils.generateToken(user.getUserId());
 

@@ -1,20 +1,17 @@
 package com.huasheng.wmssystem.domain.entity;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 
 //@EqualsAndHashCode(callSuper = false)
@@ -22,6 +19,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "[User]")
+@ApiModel(value = "")
 public class User implements Serializable {
 
 //    private static final long serialVersionUID = 1L;
@@ -31,6 +29,7 @@ public class User implements Serializable {
     private String userId;
 
     @NotBlank(message = "昵称不能为空")
+    @ApiModelProperty(value = "")
     private String username;
 
     private String realName;
@@ -50,12 +49,12 @@ public class User implements Serializable {
     private int status;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Timestamp addTime;
+    private java.sql.Date addTime;
 
     private String addUser;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Timestamp editTime;
+    private Date editTime;
 
     private String editUser;
 

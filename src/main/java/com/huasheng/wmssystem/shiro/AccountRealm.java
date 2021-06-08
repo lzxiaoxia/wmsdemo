@@ -51,7 +51,7 @@ public class AccountRealm extends AuthorizingRealm {
             throw new UnknownAccountException("账户不存在");
         }
 
-        if (user.getStatus() == -1) {
+        if (user.isLockFlag()) {
             throw new LockedAccountException("账户已被锁定");
         }
 
