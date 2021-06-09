@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huasheng.wmssystem.core.service.TestService;
 import com.huasheng.wmssystem.domain.entity.Test;
-import com.huasheng.wmssystem.domain.model.UserRedis;
+import com.huasheng.wmssystem.domain.model.redismodel.UserRedis;
+import com.huasheng.wmssystem.domain.model.resultmodel.DataResult;
 import com.huasheng.wmssystem.domain.model.paramodel.ListPara;
-import com.huasheng.wmssystem.domain.model.resultmodel.ResultBase;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,12 +97,12 @@ public class HelloController {
 //    public String list(Integer page,int pageSize) {
     public String list(ListPara listPara) {
 
-        try{
-            String nameParam="";
+        try {
+            String nameParam = "";
             ObjectMapper objectMapper = new ObjectMapper();
 
 //            String json = objectMapper.writeValueAsString(testService.findList(nameParam, page - 1, pageSize-1));
-            String json = objectMapper.writeValueAsString(testService.findList(nameParam, listPara.getPage() - 1, listPara.getPageSize()-1));
+            String json = objectMapper.writeValueAsString(testService.findList(nameParam, listPara.getPage() - 1, listPara.getPageSize() - 1));
             System.out.println(json);
 
         } catch (JsonProcessingException e) {
@@ -168,22 +168,11 @@ public class HelloController {
     @GetMapping("getById")
     @ApiOperation(value = "根据Id查询角色")
 //    @RequiresAuthentication
-    public ResultBase toEdit(String id) {
-        Map map = new HashMap();
-        ResultBase resultBase = new ResultBase();
-        try {
-            return ResultBase.succ(testService.findByRid(id));
-//            map.put("bean", testService.findByRid(id));
-//            map.put("code", 1);
-//            map.put("msg", "成功");
-        } catch (Exception e) {
+    public DataResult<Test> toEdit(String id) {
 
-            return ResultBase.fail("10020", "失败");
-//            map.put("code", 0);
-//            map.put("msg", "失败");
-//            e.printStackTrace();
-        }
-//        return map;
+        DataResult<Test> dataResult=new DataResult<>();
+        return dataResult.succ(testService.findByRid(id));
+
     }
 
 }

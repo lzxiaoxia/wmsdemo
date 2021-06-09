@@ -2,16 +2,15 @@ package com.huasheng.wmssystem.controller;
 
 import com.huasheng.wmssystem.core.service.UserService;
 import com.huasheng.wmssystem.domain.entity.User;
+import com.huasheng.wmssystem.domain.model.resultmodel.DataResult;
 import com.huasheng.wmssystem.domain.model.paramodel.LoginPara;
+import com.huasheng.wmssystem.domain.model.resultmodel.LoginResult;
 import com.huasheng.wmssystem.domain.model.resultmodel.ResultBase;
 import com.huasheng.wmssystem.exception.CommonErrorEnums;
 import com.huasheng.wmssystem.exception.GlobalExceptionHandler;
 import com.huasheng.wmssystem.utils.JwtUtils;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.annotations.ApiOperation;
@@ -19,7 +18,6 @@ import io.swagger.annotations.ApiOperation;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.crypto.SecureUtil;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
@@ -35,8 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/account")
 public class AccountController extends GlobalExceptionHandler {
 
-    //    @RequiresAuthentication
-    @RequiresAuthentication
     @GetMapping("/hello")
     public String hello() {
 
@@ -53,30 +49,35 @@ public class AccountController extends GlobalExceptionHandler {
 
     @PostMapping("/login")
     @ApiOperation(value = "用户登录")
-    public ResultBase login(@Validated @RequestBody LoginPara loginPara, HttpServletResponse response) {
+    public DataResult<LoginResult> login(@Validated @RequestBody LoginPara loginPara, HttpServletResponse response) {
 
         User user = userService.findByUserName(loginPara.getUsername());
-        Assert.notNull(user, "用户不存在");
+        Assert.notNull(user, "用户名或密码错误");
 
         if (!user.getPassword().equalsIgnoreCase(SecureUtil.md5(loginPara.getPassword()))) {
-            return ResultBase.fail(CommonErrorEnums.WRONG_USERNAME_PWD);
+            Assert.notNull(user, "用户名或密码错误");
+//            return ResultBase.fail(CommonErrorEnums.WRONG_USERNAME_PWD);
         }
         String jwt = jwtUtils.generateToken(user.getUserId());
 
         response.setHeader("Authorization", jwt);
         response.setHeader("Access-control-Expose-Headers", "Authorization");
 
-        return ResultBase.succ(MapUtil.builder()
-                .put("id", user.getUserId())
-                .put("username", user.getUsername())
-                .map()
-        );
-    }
+
+        DataResult<LoginResult> dataResult = new DataResult<>();
+
+        LoginResult loginResult = new LoginResult();
+        loginResult.setId(user.getUserId());
+        loginResult.setUsername(user.getUsername());
+
+        return dataResult.succ(loginResult)
+        ;
+}
 
     @GetMapping("/logout")
     public ResultBase logout() {
         SecurityUtils.getSubject().logout();
-        return ResultBase.succ(null);
+        return ResultBase.succ();
     }
 
 

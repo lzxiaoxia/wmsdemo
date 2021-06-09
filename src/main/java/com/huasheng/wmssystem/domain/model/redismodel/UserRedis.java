@@ -1,4 +1,4 @@
-package com.huasheng.wmssystem.domain.model;
+package com.huasheng.wmssystem.domain.model.redismodel;
 
 import lombok.Getter;
 import lombok.Setter;

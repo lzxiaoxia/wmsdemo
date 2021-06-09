@@ -17,8 +17,6 @@ public class ResultBase implements Serializable {
 
     private String msg;
 
-    private Object data;
-
     public static ResultBase succ() {
         ResultBase r = new ResultBase();
         r.setCode("00000");
@@ -26,27 +24,10 @@ public class ResultBase implements Serializable {
         return r;
     }
 
-    public static ResultBase succ(Object data) {
-        ResultBase r = new ResultBase();
-        r.setCode("00000");
-        r.setMsg("成功");
-        r.setData(data);
-        return r;
-    }
-
-    public static ResultBase succ(String msg, Object data) {
-        ResultBase r = new ResultBase();
-        r.setCode("00000");
-        r.setMsg(msg);
-        r.setData(data);
-        return r;
-    }
-
     public static ResultBase fail(String code, String msg) {
         ResultBase r = new ResultBase();
         r.setCode(code);
         r.setMsg(msg);
-        r.setData(null);
         return r;
     }
 
@@ -54,7 +35,15 @@ public class ResultBase implements Serializable {
         ResultBase r = new ResultBase();
         r.setCode(errorEnums.getCodeStr());
         r.setMsg(errorEnums.getMsg());
-        r.setData(null);
+        return r;
+    }
+
+
+    /*正式运行时不返回具体错误信息*/
+    public static ResultBase fail(CommonErrorEnums errorEnums, String msg) {
+        ResultBase r = new ResultBase();
+        r.setCode(errorEnums.getCodeStr());
+        r.setMsg(errorEnums.getMsg() + ":" + msg);
         return r;
     }
 
@@ -62,7 +51,6 @@ public class ResultBase implements Serializable {
         ResultBase r = new ResultBase();
         r.setCode(code);
         r.setMsg(msg);
-        r.setData(data);
         return r;
     }
 

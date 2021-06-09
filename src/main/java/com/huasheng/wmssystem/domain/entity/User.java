@@ -46,17 +46,18 @@ public class User implements Serializable {
 
     private boolean forgetFlag;
 
+    @ApiModelProperty(hidden = true)
     private int status;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @ApiModelProperty(value = "添加时间")
     private java.sql.Date addTime;
 
     private String addUser;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @ApiModelProperty(value = "编辑时间")
     private Date editTime;
 
     private String editUser;
-
-
 }

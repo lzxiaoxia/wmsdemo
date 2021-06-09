@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.Resource;
 import javax.servlet.Filter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -62,9 +63,15 @@ public class ShiroConfig {
 
         Map<String, String> filterMap = new LinkedHashMap<>();
 
-        filterMap.put("/**", "jwt");
 //        filterMap.put("/test/**", "anon");
-//        filterMap.put("/api/**", "jwt");
+//        filterMap.put("/account/**", "anon");
+//        filterMap.put("/common/**", "anon");
+
+        //先走JWT，无JWT时候判断登录验证
+        filterMap.put("/api/**", "jwt,authc");
+
+        //其他均可自由访问
+        filterMap.put("/**", "anon");
 
 //        设置无权限时跳转的 url;
 //        factoryBean.setUnauthorizedUrl("/unauthorized/无权限");
@@ -90,6 +97,7 @@ public class ShiroConfig {
         shiroFilter.setFilterChainDefinitionMap(filterMap);
         return shiroFilter;
     }
+
 
    /* @Bean(name = "exceptionHandler")
     public HandlerExceptionResolver handlerExceptionResolver(){

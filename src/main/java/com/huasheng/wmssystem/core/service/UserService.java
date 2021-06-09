@@ -44,16 +44,16 @@ public class UserService{
     /**
      * 分页查询
      */
-    public Page findList(String nameParam, int pageNum, int pageSize) {
+    public Page<User> findList(String nameParam, int pageNum, int pageSize) {
 
         Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.Direction.DESC, "addTime");
-//        Pageable pageable= PageRequest.of(pageNum,pageSize, Sort.Direction.DESC,"rid");
-        Page<User> rolesPage = userRepository.findAll(new Specification<User>() {
+
+        return userRepository.findAll(new Specification<User>() {
             @Override
             public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> list = new ArrayList<>();
                 if (!Tools.isEmpty(nameParam)) {
-//                    list.add(criteriaBuilder.like(root.get("roleName").as(String.class), "%" + nameParam + "%"));
+                    list.add(criteriaBuilder.like(root.get("roleName").as(String.class), "%" + nameParam + "%"));
                 }
 
 //                list.add(criteriaBuilder.equal(root.get("delFlag").as(Boolean.class),false));
@@ -62,8 +62,6 @@ public class UserService{
                 return criteriaBuilder.and(list.toArray(p));
             }
         }, pageable);
-
-        return rolesPage;
     }
 
 }

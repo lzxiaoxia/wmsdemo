@@ -27,22 +27,29 @@ import javax.servlet.ServletException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({ UnauthenticatedException.class, AuthenticationException.class })
+    @ExceptionHandler({UnauthenticatedException.class, AuthenticationException.class})
     public ResultBase authenticationException() {
-        return ResultBase.fail("20002", "token已失效，请重新登录");
-
+        return ResultBase.fail("200021", "token已失效，请重新登录");
     }
 
-    @ExceptionHandler({ UnauthorizedException.class, AuthorizationException.class })
+    @ExceptionHandler({UnauthorizedException.class, AuthorizationException.class})
     public ResultBase authorizationException() {
-        return ResultBase.fail("20002", "token已失效，请重新登录");
+        return ResultBase.fail("200022", "token已失效，请重新登录");
+    }
+
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = ExpiredCredentialsException.class)
+    public ResultBase handler(ExpiredCredentialsException e) {
+//        log.error("实体校验异常：----------------{}", e);
+        return ResultBase.fail("200023", "token已失效，请重新登录");
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(value = ShiroException.class)
     public ResultBase handler(ShiroException e) {
         log.error("运行时异常：----------------{}", e);
-        return ResultBase.fail("20001", "运行时异常：" + e.getMessage(), null);
+        return ResultBase.fail(CommonErrorEnums.USER_VERIFY_ERROR, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -52,47 +59,37 @@ public class GlobalExceptionHandler {
         BindingResult bindingResult = e.getBindingResult();
         ObjectError objectError = bindingResult.getAllErrors().stream().findFirst().get();
 
-        return ResultBase.fail("20002", "实体校验异常：" + objectError.getDefaultMessage());
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(value = ExpiredCredentialsException.class)
-    public ResultBase handler(ExpiredCredentialsException e) {
-//        log.error("实体校验异常：----------------{}", e);
-
-        return ResultBase.fail("20002", "token已失效，请重新登录");
+        return ResultBase.fail(CommonErrorEnums.USER_LOGIN_EXPIRED, objectError.getDefaultMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = NotFoundException.class)
     public ResultBase handler(CommonErrorEnums e) {
         log.error("找不到实体：----------------{}", e);
-        return ResultBase.fail("10002", "找不到对应实体");
+        return ResultBase.fail(CommonErrorEnums.ENTITY_NOT_FOUND_ERROR);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = IllegalArgumentException.class)
     public ResultBase handler(IllegalArgumentException e) {
-        log.error("Assert异常：----------------{}", e);
-        return ResultBase.fail("10003", "类型转换异常：" + e.getMessage());
+        log.error("Assert类型转换异常：----------------{}", e);
+        return ResultBase.fail(CommonErrorEnums.TYPE_CONVERSION_EXCEPTION, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = RuntimeException.class)
     public ResultBase handler(RuntimeException e) {
         log.error("运行时异常：----------------{}", e);
-        return ResultBase.fail("20001", "运行时异常：" + e.getMessage());
+        return ResultBase.fail(CommonErrorEnums.UNKNOWN_SYSTEM_EXCEPTION, e.getMessage());
     }
 
     //全局通用异常
-  /*  @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = Exception.class)
     public ResultBase handler(Exception e) {
         log.error("系统错误：----------------{}", e);
-
-        return ResultBase.fail("10030", "[系统错误！" + e.getClass().getName() + ": " + e.getLocalizedMessage() + "]");
-    }*/
-
+        return ResultBase.fail(CommonErrorEnums.UNKNOWN_SYSTEM_EXCEPTION, "[系统错误！" + e.getClass().getName() + ": " + e.getLocalizedMessage() + "]");
+    }
 
 
 }
