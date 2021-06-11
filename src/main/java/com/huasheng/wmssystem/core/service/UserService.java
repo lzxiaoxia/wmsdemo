@@ -1,8 +1,6 @@
 package com.huasheng.wmssystem.core.service;
 
 import com.huasheng.wmssystem.data.dao.UserRepository;
-import com.huasheng.wmssystem.data.dao.testRepository;
-import com.huasheng.wmssystem.domain.entity.Test;
 import com.huasheng.wmssystem.domain.entity.User;
 import com.huasheng.wmssystem.utils.Tools;
 import org.springframework.beans.factory.annotation.Autowired;

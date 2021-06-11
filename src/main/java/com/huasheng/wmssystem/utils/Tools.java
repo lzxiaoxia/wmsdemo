@@ -342,4 +342,16 @@ public class Tools {
         printWriter.close();
     }
 
+    /**
+     * @return boolean
+     * @Description uuid校验
+     * @Param [uuid]
+     * @Author xjTang
+     * @Date Create by 2021/6/10 14:15
+     */
+    public static boolean checkUuid(String uuid) {
+        return uuid.matches("([0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}?)");
+    }
+
+
 }

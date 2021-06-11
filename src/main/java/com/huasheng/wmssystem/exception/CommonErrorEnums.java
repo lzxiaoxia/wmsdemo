@@ -14,37 +14,46 @@ public enum CommonErrorEnums {
     PARAMETER_ERROR(10001, "Parameter error", "参数错误"),
     ENTITY_NOT_FOUND_ERROR(10002, "Entity not found", "找不到对应实体"),
     TYPE_CONVERSION_EXCEPTION(10003, "Type conversion error", "类型转换异常"),
-//    COMMUNICATION_ERROR(10003, "Communication error", "与其他模块通讯错误"),
+    //    COMMUNICATION_ERROR(10003, "Communication error", "与其他模块通讯错误"),
     WRONG_USERNAME_PWD(10004, "Wrong username or password", " 用户名或密码错误"),
-//    USER_RESIGNED(10005, "User has resigned", "用户已经离职"),
+    //    USER_RESIGNED(10005, "User has resigned", "用户已经离职"),
 //    ROLE_NOT_FOUND(10006, "RoLe not found", " 角色没有找到"),
     USER_NOT_F0UND(10007, "User not found", "找不到对应用户"),
-//    RESULT_NOT_F0UND(10008, "Result not found", "找不到对应实体"),
+    //    RESULT_NOT_F0UND(10008, "Result not found", "找不到对应实体"),
     FILE_NOT_F0UND(10009, "File not found", "找不到对应文件"),
+    DATA_ACCESS_ERROR(10010, "Data Access error", "数据访问异常"),
+    UUID_ERROR(10011, "Uuid error", "Id不符合格式"),
 
     /*系统错误以200开头，需做相应处理*/
     UNKNOWN_SYSTEM_EXCEPTION(20001, "Unknown system exception", "系统未知异常"),
     USER_LOGIN_EXPIRED(20002, "User login expired", "用户登录过期"),
     USER_NOT_PERMISSION(20003, "User not permission", "用户没有权限"),
-    USER_VERIFY_ERROR(20004, "User verify error", " 用户验证错误")
-    ;
+    USER_VERIFY_ERROR(20004, "User verify error", " 用户验证错误");
 
-    private int code;
+    private final int code;
 
-    private String messageEn;
+    private final String messageEn;
 
-    private String messageCn;
+    private final String messageCn;
 
-    public String getCodeStr()
-    {
-        if(code==0)
+    public String getCodeStr() {
+        if (code == 0)
             return "00000";
 
         return Integer.toString(code);
     }
 
-    public String getMsg(){
+    public String getMsg() {
         return messageCn;
+    }
+
+    public static CommonErrorEnums fromErrorCode(String errorCode) {
+        for (CommonErrorEnums type : CommonErrorEnums.values()) {
+            if (type.getCodeStr().equals(errorCode)) {
+                return type;
+            }
+        }
+        return UNKNOWN_SYSTEM_EXCEPTION;
     }
 
 }

@@ -1,7 +1,5 @@
 package com.huasheng.wmssystem.domain.model.paramodel;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -13,15 +11,15 @@ import java.io.Serializable;
  * @Description ：
  */
 @Data
-@ApiModel(value = "登录参数")
+//@ApiModel(value = "登录参数")
 public class LoginPara implements Serializable {
 
     @NotBlank(message = "昵称不能为空")
-    @ApiModelProperty(value = "用户名")
+//    @ApiModelProperty(value = "用户名")
     private String username;
 
     @NotBlank(message = "密码不能为空")
-    @ApiModelProperty(value = "密码")
+//    @ApiModelProperty(value = "密码")
     private String password;
 
 }

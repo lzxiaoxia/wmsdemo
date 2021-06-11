@@ -1,6 +1,5 @@
 package com.huasheng.wmssystem.domain.model.resultmodel;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -11,9 +10,9 @@ import lombok.Data;
 @Data
 public class LoginResult {
 
-    @ApiModelProperty(value = "用户id")
+//    @ApiModelProperty(value = "用户id")
     private String id;
 
-    @ApiModelProperty(value = "用户名")
+//    @ApiModelProperty(value = "用户名")
     private String username;
 }

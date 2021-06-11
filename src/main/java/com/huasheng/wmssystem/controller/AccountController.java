@@ -1,25 +1,21 @@
 package com.huasheng.wmssystem.controller;
 
+import cn.hutool.crypto.SecureUtil;
 import com.huasheng.wmssystem.core.service.UserService;
 import com.huasheng.wmssystem.domain.entity.User;
-import com.huasheng.wmssystem.domain.model.resultmodel.DataResult;
 import com.huasheng.wmssystem.domain.model.paramodel.LoginPara;
+import com.huasheng.wmssystem.domain.model.resultmodel.DataResult;
 import com.huasheng.wmssystem.domain.model.resultmodel.LoginResult;
 import com.huasheng.wmssystem.domain.model.resultmodel.ResultBase;
 import com.huasheng.wmssystem.exception.CommonErrorEnums;
 import com.huasheng.wmssystem.exception.GlobalExceptionHandler;
+import com.huasheng.wmssystem.exception.NotFoundException;
 import com.huasheng.wmssystem.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import io.swagger.annotations.ApiOperation;
-
-import cn.hutool.core.map.MapUtil;
-import cn.hutool.crypto.SecureUtil;
 import org.apache.shiro.SecurityUtils;
-import org.springframework.util.Assert;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -48,16 +44,15 @@ public class AccountController extends GlobalExceptionHandler {
 
 
     @PostMapping("/login")
-    @ApiOperation(value = "用户登录")
+//    @ApiOperation(value = "用户登录")
     public DataResult<LoginResult> login(@Validated @RequestBody LoginPara loginPara, HttpServletResponse response) {
 
         User user = userService.findByUserName(loginPara.getUsername());
-        Assert.notNull(user, "用户名或密码错误");
 
-        if (!user.getPassword().equalsIgnoreCase(SecureUtil.md5(loginPara.getPassword()))) {
-            Assert.notNull(user, "用户名或密码错误");
-//            return ResultBase.fail(CommonErrorEnums.WRONG_USERNAME_PWD);
+        if (user == null || !user.getPassword().equalsIgnoreCase(SecureUtil.md5(loginPara.getPassword()))) {
+            throw new NotFoundException(CommonErrorEnums.WRONG_USERNAME_PWD);
         }
+
         String jwt = jwtUtils.generateToken(user.getUserId());
 
         response.setHeader("Authorization", jwt);
@@ -71,8 +66,8 @@ public class AccountController extends GlobalExceptionHandler {
         loginResult.setUsername(user.getUsername());
 
         return dataResult.succ(loginResult)
-        ;
-}
+                ;
+    }
 
     @GetMapping("/logout")
     public ResultBase logout() {

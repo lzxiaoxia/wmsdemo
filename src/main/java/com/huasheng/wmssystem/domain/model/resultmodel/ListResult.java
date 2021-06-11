@@ -1,10 +1,7 @@
 package com.huasheng.wmssystem.domain.model.resultmodel;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -27,7 +24,7 @@ public class ListResult<T> extends ResultBase {
     public ListResult<List<T>> succ(Page<T> page) {
         ListResult<List<T>> r = new ListResult<>();
         r.setPageTotal(page.getTotalPages());
-        r.setTotal(page.getTotalPages());
+        r.setTotal(page.getTotalElements());
         r.setCode("00000");
         r.setMsg("成功");
         r.setData(page.getContent());
@@ -37,7 +34,7 @@ public class ListResult<T> extends ResultBase {
     public ListResult<List<T>> succ(Page<T> page, String msg) {
         ListResult<List<T>> r = new ListResult<>();
         r.setPageTotal(page.getTotalPages());
-        r.setTotal(page.getTotalPages());
+        r.setTotal(page.getTotalElements());
         r.setCode("00000");
         r.setMsg(msg);
         r.setData(page.getContent());

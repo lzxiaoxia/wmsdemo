@@ -1,15 +1,15 @@
 package com.huasheng.wmssystem.controller.user;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huasheng.wmssystem.core.service.UserService;
 import com.huasheng.wmssystem.domain.entity.User;
 import com.huasheng.wmssystem.domain.model.resultmodel.DataResult;
 import com.huasheng.wmssystem.domain.model.resultmodel.ListResult;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -19,36 +19,31 @@ import java.util.List;
  * @Description ：
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
     UserService userService;
 
     @GetMapping("getById")
-    @ApiOperation(value = "根据Id查询角色")
-    public DataResult<User> toEdit(String id) {
+//    @ApiOperation(value = "根据Id查询角色")
+    public DataResult<User> getById(String id) {
         User user = userService.findByUserId(id);
 
-        String name = user.getRealName();
-        Assert.notNull(user, "用户不存在");
-
-        DataResult<User> dataResult=new DataResult<>();
+        DataResult<User> dataResult = new DataResult<>();
         return dataResult.succ(user);
     }
 
+    @GetMapping("getList")
+//    @ApiOperation(value = "分页查询")
+    public ListResult<List<User>> list(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                                       @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
 
-    @GetMapping("userlist")
-    @ApiOperation(value = "分页查询")
-    public ListResult<List<User>> list(String nameParam,
-                                 @RequestParam(value = "page", defaultValue = "1") Integer page,
-                                 @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        Page<User> users = userService.findList("", page - 1, pageSize);
 
-        Page<User> users = userService.findList(nameParam, page - 1, pageSize);
-
-        ListResult<User> listResult=new ListResult<>();
+        ListResult<User> listResult = new ListResult<>();
         return listResult.succ(users);
-
     }
+
 
 }
