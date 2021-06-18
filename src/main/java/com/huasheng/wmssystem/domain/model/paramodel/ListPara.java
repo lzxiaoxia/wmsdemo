@@ -1,6 +1,10 @@
 package com.huasheng.wmssystem.domain.model.paramodel;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
+import javax.validation.constraints.Pattern;
 
 /**
  * @Author ：xjTang
@@ -9,12 +13,12 @@ import lombok.Data;
  */
 
 @Data
-//@ApiModel(value = "列表请求基类")
 public class ListPara {
-//    @ApiModelProperty(value = "页数", example = "1")
+
+    @Schema(description = "页码", example = "1")
     private int page = 1;
 
-//    @ApiModelProperty(value = "每页数量", example = "10")
+    @Schema(description = "每页数量", example = "10")
     private int pageSize = 10;
 
 }

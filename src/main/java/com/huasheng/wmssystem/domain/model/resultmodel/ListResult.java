@@ -21,6 +21,26 @@ public class ListResult<T> extends ResultBase {
 
     private int pageTotal;
 
+    public ListResult<List<T>> succ(List<T> data, long total, int pageTotal) {
+        ListResult<List<T>> r = new ListResult<>();
+        r.setPageTotal(pageTotal);
+        r.setTotal(total);
+        r.setCode("00000");
+        r.setMsg("成功");
+        r.setData(data);
+        return r;
+    }
+
+    public ListResult<T> succ(long total, int pageTotal) {
+        ListResult<T> r = new ListResult<>();
+        r.setPageTotal(pageTotal);
+        r.setTotal(total);
+        r.setCode("00000");
+        r.setMsg("成功");
+        r.setData(null);
+        return r;
+    }
+
     public ListResult<List<T>> succ(Page<T> page) {
         ListResult<List<T>> r = new ListResult<>();
         r.setPageTotal(page.getTotalPages());

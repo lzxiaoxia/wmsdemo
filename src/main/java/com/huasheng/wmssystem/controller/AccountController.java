@@ -11,6 +11,7 @@ import com.huasheng.wmssystem.exception.CommonErrorEnums;
 import com.huasheng.wmssystem.exception.GlobalExceptionHandler;
 import com.huasheng.wmssystem.exception.NotFoundException;
 import com.huasheng.wmssystem.utils.JwtUtils;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @Slf4j
 @RequestMapping("/account")
+@Tag(name = "AccountController", description = "账号登录相关接口")
 public class AccountController extends GlobalExceptionHandler {
 
     @GetMapping("/hello")
@@ -65,8 +67,7 @@ public class AccountController extends GlobalExceptionHandler {
         loginResult.setId(user.getUserId());
         loginResult.setUsername(user.getUsername());
 
-        return dataResult.succ(loginResult)
-                ;
+        return dataResult.succ(loginResult);
     }
 
     @GetMapping("/logout")

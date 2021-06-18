@@ -13,11 +13,13 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
+import javax.validation.ConstraintViolationException;
 
 /**
  * @Author ：xjTang
@@ -52,11 +54,23 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
 //    @ApiResponse(responseCode = "20002",description = "用户登录过期")
     public ResultBase handler(MethodArgumentNotValidException e) {
-        log.error("实体校验异常：----------------{}", e);
+        log.error("参数校验异常：----------------{}", e);
         BindingResult bindingResult = e.getBindingResult();
-        ObjectError objectError = bindingResult.getAllErrors().stream().findFirst().get();
+        StringBuilder sb = new StringBuilder("");
+        for (FieldError fieldError : bindingResult.getFieldErrors()) {
+            sb.append(fieldError.getField()).append("：").append(fieldError.getDefaultMessage()).append(", ");
+        }
 
-        return ResultBase.fail(CommonErrorEnums.USER_LOGIN_EXPIRED, objectError.getDefaultMessage());
+        return ResultBase.fail(CommonErrorEnums.PARAMETER_ERROR, sb.toString());
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(value = ConstraintViolationException.class)
+//    @ApiResponse(responseCode = "20002",description = "用户登录过期")
+    public ResultBase handler(ConstraintViolationException e) {
+        log.error("参数校验异常：----------------{}", e);
+
+        return ResultBase.fail(CommonErrorEnums.PARAMETER_ERROR, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

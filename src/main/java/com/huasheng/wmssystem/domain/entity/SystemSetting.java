@@ -14,32 +14,26 @@ import java.util.Date;
 
 @Data
 @Entity
-@Schema(description = "文件管理")
-@SQLDelete(sql = "update [FileManage] set status = -1 where file_manage_id = ?")
+@Schema(description = "系统设置表")
+@SQLDelete(sql = "update [SystemSetting] set status = -1 where system_set_id = ?")
 @Where(clause = "status <> -1")
-public class FileManage implements Serializable {
+public class SystemSetting implements Serializable {
    
-    @Schema(description = "文件ID")
+    @Schema(description = "系统设置ID")
     @Id
-	private String fileManageId;
+	private String systemSetId;
 
-    @Schema(description = "文件类型（P图片，F文件）")
+    @Schema(description = "类别")
 	private String type;
 
-    @Schema(description = "来源（比如：商户头像：V_HeadPic）")
-	private String source;
+    @Schema(description = "键")
+	private String key;
 
-    @Schema(description = "文件大小")
-	private String size;
+    @Schema(description = "值")
+	private int value;
 
-    @Schema(description = "本地地址")
-	private String localPath;
-
-    @Schema(description = "云盘地址")
-	private String cloudPath;
-
-    @Schema(description = "描述")
-	private String desc;
+    @Schema(description = "值")
+	private String valueStr;
 
     @Schema(hidden = true)
 	private String addUser;
@@ -47,6 +41,13 @@ public class FileManage implements Serializable {
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Schema(hidden = true)
 	private Date addTime;
+
+    @Schema(hidden = true)
+	private String editUser;
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Schema(hidden = true)
+	private Date editTime;
 	
 }
 

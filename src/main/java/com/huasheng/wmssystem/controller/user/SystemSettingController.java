@@ -1,13 +1,11 @@
 package com.huasheng.wmssystem.controller.user;
 
-import com.huasheng.wmssystem.core.service.UserService;
-import com.huasheng.wmssystem.domain.entity.User;
-import com.huasheng.wmssystem.domain.model.paramodel.web.UserListPara;
+import com.huasheng.wmssystem.core.service.SystemSettingService;
+import com.huasheng.wmssystem.domain.entity.SystemSetting;
+import com.huasheng.wmssystem.domain.model.paramodel.ListPara;
 import com.huasheng.wmssystem.domain.model.resultmodel.DataResult;
 import com.huasheng.wmssystem.domain.model.resultmodel.ListResult;
 import com.huasheng.wmssystem.domain.model.resultmodel.ResultBase;
-import com.huasheng.wmssystem.domain.model.resultmodel.web.UserInfoResult;
-import com.huasheng.wmssystem.domain.model.resultmodel.web.UserListResult;
 import com.huasheng.wmssystem.exception.CommonErrorEnums;
 import com.huasheng.wmssystem.exception.CustomException;
 import com.huasheng.wmssystem.utils.Constant;
@@ -17,6 +15,7 @@ import com.huasheng.wmssystem.utils.Tools;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,57 +24,55 @@ import javax.validation.constraints.Pattern;
 
 @RestController
 @Validated
-@RequestMapping("/api/user")
-@Tag(name = "UserController", description = "用户表接口")
-public class UserController {
+@RequestMapping("/api/systemSetting")
+@Tag(name = "SystemSettingController", description = "系统设置表接口")
+public class SystemSettingController {
 
     @Autowired
-    UserService userService;
+    SystemSettingService systemSettingService;
 
     @Autowired
     JwtUtils jwtUtils;
 
     @GetMapping("getById/{id}")
-    public DataResult<UserInfoResult> getById(@PathVariable @Pattern(regexp = Constant.uuidRegex,message = "id不规范") String id) {
-        UserInfoResult userInfo = userService.getUserInfo(id);
+    public DataResult<SystemSetting> getById(@PathVariable @Pattern(regexp = Constant.uuidRegex,message = "id不规范") String id) {
+        SystemSetting systemSetting = systemSettingService.findBySystemSettingId(id);
 
-        DataResult<UserInfoResult> dataResult = new DataResult<>();
-        return dataResult.succ(userInfo);
+        DataResult<SystemSetting> dataResult = new DataResult<>();
+        return dataResult.succ(systemSetting);
     }
 
     @PostMapping("getList")
-    public ListResult<List<UserListResult>> list(@RequestBody UserListPara listPara) {
-
-        return userService.findList(listPara);
+    public ListResult<List<SystemSetting>> list(ListPara listPara) {
+        return systemSettingService.findList(listPara);
     }
 
     @PostMapping("add")
-    public ResultBase addUser(@RequestBody User bean) {
+    public ResultBase addSystemSetting(@RequestBody SystemSetting bean) {
         AccountProfile accountProfile = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
         bean.setAddUser(accountProfile.getUserId());
-        bean.setEditUser(accountProfile.getUserId());
-        userService.addOrEdit(bean);
+        systemSettingService.addOrEdit(bean);
         return ResultBase.succ();
     }
 
     @PutMapping("edit")
-    public ResultBase editUser(@RequestBody User bean) {
-        if (!Tools.checkUuid(bean.getUserId()))
+    public ResultBase editSystemSetting(@RequestBody SystemSetting bean) {
+        if (!Tools.checkUuid(bean.getSystemSetId()))
             throw new CustomException(CommonErrorEnums.UUID_ERROR);
             
-        userService.addOrEdit(bean);
+        systemSettingService.addOrEdit(bean);
         return ResultBase.succ();
     }
 
     @DeleteMapping("delete")
     public ResultBase delete(@Pattern(regexp = Constant.uuidRegex,message = "id不规范") String id) {
-        userService.deleteById(id);
+        systemSettingService.deleteById(id);
         return ResultBase.succ();
     }
 
     @PostMapping("deleteBatch")
     public ResultBase deleteBatch(@RequestBody List<String> ids) {
-        userService.deleteByIds(ids);
+        systemSettingService.deleteByIds(ids);
         return ResultBase.succ();
     }
 
